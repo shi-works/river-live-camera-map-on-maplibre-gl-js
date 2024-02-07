@@ -32,5 +32,5 @@ jobs:
         git config --global user.name "shi-works"
         git add data/*
         git commit -m 'Update data files'
-        git push
+        git push origin main
 
