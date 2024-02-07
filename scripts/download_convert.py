@@ -13,16 +13,18 @@ def download_csv(url, path, encoding):
     with open(path, 'w', encoding=encoding) as file:
         file.write(response.text)
 
-def csv_to_geojson(csv_path, geojson_path):
-    with open(csv_path, newline='') as csvfile:
+def csv_to_geojson(csv_path, geojson_path, encoding='utf-8'):
+    with open(csv_path, newline='', encoding=encoding) as csvfile:
         reader = csv.DictReader(csvfile)
         features = []
         for row in reader:
+            # 緯度経度のデータを取得し、GeoJSONのポイントに変換
             point = geojson.Point((float(row['経度']), float(row['緯度'])))
             features.append(geojson.Feature(geometry=point, properties=row))
         feature_collection = geojson.FeatureCollection(features)
-        with open(geojson_path, 'w') as f:
-            geojson.dump(feature_collection, f)
+        # GeoJSONをUTF-8で保存
+        with open(geojson_path, 'w', encoding='utf-8') as f:
+            geojson.dump(feature_collection, f, ensure_ascii=False)
 
 def main():
     urls = [
@@ -30,17 +32,15 @@ def main():
         "https://www.opendata.metro.tokyo.lg.jp/kensetsu/R4/130001_river_monitoring_cameras.csv"
     ]
     csv_paths = ["data/shizuoka_river_cameras.csv", "data/tokyo_river_cameras.csv"]
-    geojson_paths = ["data/shizuoka_river_cameras.geojson", "data/tokyo_river_cameras.geojson"] 
-    encodings = ["cp932", "utf-8"]
+    geojson_paths = ["data/shizuoka_river_cameras.geojson", "data/tokyo_river_cameras.geojson"]
+    encodings = ["cp932", "utf-8"]  # シフトJISとUTF-8のエンコーディング
 
-    for url, path, encoding in zip(urls, csv_paths, encodings):
+    for url, csv_path, geojson_path, encoding in zip(urls, csv_paths, geojson_paths, encodings):
         # CSVファイルをダウンロード
-        download_csv(url, path, encoding)
+        download_csv(url, csv_path, encoding)
         # CSVからGeoJSONへの変換
-        csv_to_geojson(csv_paths, geojson_paths)
-        print(f"GeoJSON saved to {geojson_paths}")
+        csv_to_geojson(csv_path, geojson_path, encoding)
+        print(f"GeoJSON saved to {geojson_path}")
 
 if __name__ == "__main__":
     main()
-
-
