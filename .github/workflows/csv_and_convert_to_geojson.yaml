@@ -24,7 +24,7 @@ jobs:
 
     - name: Download CSVs and Convert to GeoJSON
       run: |
-        python .github/scripts/download_convert.py
+        python scripts/download_convert.py
 
     - name: Commit and push changes
       run: |
