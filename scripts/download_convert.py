@@ -23,4 +23,19 @@ def csv_to_geojson(csv_path, geojson_path):
 def main():
     urls = [
         "https://opendata.pref.shizuoka.jp/dataset/fuji-156/resource/32450/%E6%B2%B3%E5%B7%9D%E3%82%AB%E3%83%A1%E3%83%A9%EF%BC%88202010401%EF%BC%89.csv",
-        "https://www.opendata.metro.tokyo.lg.jp/kensetsu/R4/130001_river
+        "https://www.opendata.metro.tokyo.lg.jp/kensetsu/R4/130001_river_monitoring_cameras.csv"
+    ]
+    csv_paths = ["data/shizuoka_river_cameras.csv", "data/tokyo_river_cameras.csv"]
+    geojson_paths = ["data/shizuoka_river_cameras.geojson", "data/tokyo_river_cameras.geojson"]
+
+    for url, csv_path, geojson_path in zip(urls, csv_paths, geojson_paths):
+        # CSVファイルをダウンロード
+        download_csv(url, csv_path)
+        # CSVからGeoJSONへの変換
+        csv_to_geojson(csv_path, geojson_path)
+        print(f"GeoJSON saved to {geojson_path}")
+
+if __name__ == "__main__":
+    main()
+
+
