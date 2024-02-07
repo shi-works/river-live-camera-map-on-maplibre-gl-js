@@ -1,1 +1,36 @@
+name: Download CSV and Convert to GeoJSON
+
+on:
+  schedule:
+    # 毎日UTC 00:00に実行
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  download_and_convert:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install requests geojson
+
+    - name: Download CSVs and Convert to GeoJSON
+      run: |
+        python .github/scripts/download_convert.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.email "y.shiwaku.5519@gmail.com"
+        git config --global user.name "shi-works"
+        git add data/*
+        git commit -m 'Update data files'
+        git push
 
