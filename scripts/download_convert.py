@@ -3,15 +3,14 @@ import geojson
 import csv
 from pathlib import Path
 
-def download_csv(url, path):
-    # ファイルパスのPathオブジェクトを作成
+def download_csv(url, path, encoding):
+    response = requests.get(url)
+    response.raise_for_status()  # エラー時に例外を発生
     path = Path(path)
     # ディレクトリが存在しない場合は作成
     path.parent.mkdir(parents=True, exist_ok=True)
-    
-    response = requests.get(url)
-    response.raise_for_status()  # エラー時に例外を発生
-    with path.open('w') as file:
+    # レスポンスの内容を指定されたエンコーディングでデコードし、ファイルに書き込む
+    with open(path, 'w', encoding=encoding) as file:
         file.write(response.text)
 
 def csv_to_geojson(csv_path, geojson_path):
@@ -31,14 +30,15 @@ def main():
         "https://www.opendata.metro.tokyo.lg.jp/kensetsu/R4/130001_river_monitoring_cameras.csv"
     ]
     csv_paths = ["data/shizuoka_river_cameras.csv", "data/tokyo_river_cameras.csv"]
-    geojson_paths = ["data/shizuoka_river_cameras.geojson", "data/tokyo_river_cameras.geojson"]
+    geojson_paths = ["data/shizuoka_river_cameras.geojson", "data/tokyo_river_cameras.geojson"] 
+    encodings = ["cp932", "utf-8"]
 
-    for url, csv_path, geojson_path in zip(urls, csv_paths, geojson_paths):
+    for url, path, encoding in zip(urls, csv_paths, encodings):
         # CSVファイルをダウンロード
-        download_csv(url, csv_path)
+        download_csv(url, path, encoding)
         # CSVからGeoJSONへの変換
-        csv_to_geojson(csv_path, geojson_path)
-        print(f"GeoJSON saved to {geojson_path}")
+        csv_to_geojson(csv_paths, geojson_paths)
+        print(f"GeoJSON saved to {geojson_paths}")
 
 if __name__ == "__main__":
     main()
