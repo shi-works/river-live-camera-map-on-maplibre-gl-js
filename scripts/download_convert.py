@@ -4,9 +4,14 @@ import csv
 from pathlib import Path
 
 def download_csv(url, path):
+    # ファイルパスのPathオブジェクトを作成
+    path = Path(path)
+    # ディレクトリが存在しない場合は作成
+    path.parent.mkdir(parents=True, exist_ok=True)
+    
     response = requests.get(url)
     response.raise_for_status()  # エラー時に例外を発生
-    with open(path, 'w') as file:
+    with path.open('w') as file:
         file.write(response.text)
 
 def csv_to_geojson(csv_path, geojson_path):
